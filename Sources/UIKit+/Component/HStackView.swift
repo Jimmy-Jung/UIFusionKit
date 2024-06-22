@@ -7,32 +7,24 @@
 
 import UIKit
 
-open class HStackView: UIStackView {
-    init() {
-        super.init(frame: .zero)
-        self.axis(.horizontal)
-            .alignment(.center)
-            .distribution(.fill)
-    }
+public class HStackView: UIStackView {
     
-    public required init(coder: NSCoder) {
-        super.init(coder: coder)
-        self.axis(.horizontal)
-            .alignment(.center)
-            .distribution(.fill)
-    }
-    
-    convenience init(
+    init(
         spacing: CGFloat = 0,
         alignment: UIStackView.Alignment = .center,
         distribution: UIStackView.Distribution = .fill,
         @UIViewBuilder _ content: () -> [UIView]
     ) {
-        self.init()
-        self.alignment(alignment)
+        super.init(frame: .zero)
+        self.axis(.horizontal)
+            .alignment(alignment)
             .distribution(distribution)
             .spacing(spacing)
-        
         content().forEach { self.addArrangedSubview($0) }
+    }
+  
+    @available(*, unavailable)
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

@@ -5,7 +5,7 @@
 //  Created by 정준영 on 2023/08/28.
 //
 
-import UIKit.UIStackView
+import UIKit
 
 public extension UIFusion where Self: UIStackView {
     

@@ -12,6 +12,7 @@ import Combine
 private var cancellablesKey: UInt8 = 0
 
 extension UIView {
+    
     private var syncQueue: DispatchQueue {
         return DispatchQueue(label: "com.UIFusionKit.UIView.cancellablesQueue", attributes: .concurrent)
     }
@@ -69,19 +70,6 @@ extension UIView: UIFusion {
 }
 
 public extension UIFusion where Self: UIView {
-    
-    init(
-        alignment: Alignment = .center,
-        distribution: UIStackView.Distribution = .fill,
-        @UIViewBuilder _ content: () -> [UIView] = { [] }
-    ) {
-        self.init(frame: .zero)
-        addVStackView(
-            alignment: alignment,
-            distribution: distribution,
-            content
-        )
-    }
     
     @discardableResult
     func body(topSafeArea: Bool = false, _ view: UIView) -> Self {

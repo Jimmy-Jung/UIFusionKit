@@ -7,8 +7,11 @@
 
 import UIKit
 
-open class ZStackView: UIView {
-    init(alignment: Alignment = .center, @UIViewBuilder _ content: () -> [UIView]) {
+public class ZStackView: UIView {
+    public init(
+        alignment: Alignment = .center,
+        @UIViewBuilder _ content: () -> [UIView]
+    ) {
         super.init(frame: .zero)
         content().forEach {
             self.addSubview($0)

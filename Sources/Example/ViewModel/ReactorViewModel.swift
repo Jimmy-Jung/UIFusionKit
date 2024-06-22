@@ -21,7 +21,7 @@ public enum ReactorViewModelMutation {
     case changeButtonHeight
 }
 
-public class ReactorViewModelOutput: ObservableObject {
+public class ReactorViewModelOutput {
     @Published var buttonCount: Int
     @Published var labelText: String
     @Published var buttonText: String
@@ -37,7 +37,7 @@ public class ReactorViewModelOutput: ObservableObject {
     }
 }
 
-public protocol ReactorViewModel: ObservableObject, ViewModelProtocol where
+public protocol ReactorViewModel: ViewModelProtocol where
     Input == ReactorViewModelInput,
     Mutation == ReactorViewModelMutation,
     Output == ReactorViewModelOutput {}
