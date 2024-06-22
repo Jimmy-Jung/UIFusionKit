@@ -15,6 +15,13 @@ open class VStackView: UIStackView {
             .distribution(.fill)
     }
     
+    public required init(coder: NSCoder) {
+        super.init(coder: coder)
+        self.axis(.vertical)
+            .alignment(.center)
+            .distribution(.fill)
+    }
+    
     convenience init(
         spacing: CGFloat = 0,
         alignment: UIStackView.Alignment = .center,
@@ -27,10 +34,5 @@ open class VStackView: UIStackView {
             .spacing(spacing)
         
         content().forEach { self.addArrangedSubview($0) }
-    }
-    
-    @available(*, unavailable)
-    required public init(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
