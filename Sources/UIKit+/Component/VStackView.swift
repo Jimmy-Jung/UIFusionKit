@@ -8,12 +8,6 @@
 import UIKit
 
 open class VStackView: UIStackView {
-    init() {
-        super.init(frame: .zero)
-        self.axis(.vertical)
-            .alignment(.center)
-            .distribution(.fill)
-    }
     
     public required init(coder: NSCoder) {
         super.init(coder: coder)
