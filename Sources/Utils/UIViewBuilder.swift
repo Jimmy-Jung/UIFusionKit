@@ -8,7 +8,7 @@
 import SwiftUI
 
 @resultBuilder
-struct UIViewBuilder {
+public struct UIViewBuilder {
     public static func buildBlock(_ components: UIView...) -> [UIView] {
         components
     }
