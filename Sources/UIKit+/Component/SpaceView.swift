@@ -7,28 +7,25 @@
 
 import UIKit
 
-open class SpaceView: UIView {
+public class SpaceView: UIView {
     
-    init() {
-        super.init(frame: .zero)
-    }
-    
-    init(vertical: CGFloat) {
-        super.init(frame: .zero)
-        self.snp.makeConstraints { make in
-            make.height.equalTo(vertical)
-        }
-    }
-    
-    init(horizontal: CGFloat) {
+    init(
+        vertical: CGFloat? = nil,
+        horizontal: CGFloat? = nil
+    ) {
         super.init(frame: .zero)
         self.snp.makeConstraints { make in
-            make.width.equalTo(horizontal)
+            if let vertical {
+                make.height.equalTo(vertical)
+            }
+            if let horizontal {
+                make.width.equalTo(horizontal)
+            }
         }
     }
     
     @available(*, unavailable)
-    required public init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

@@ -7,19 +7,25 @@
 
 import UIKit
 
-open class VStackView: UIStackView {
+public class VStackView: UIStackView {
     
-    convenience init(
+    public init(
         spacing: CGFloat = 0,
         alignment: UIStackView.Alignment = .center,
         distribution: UIStackView.Distribution = .fill,
         @UIViewBuilder _ content: () -> [UIView]
     ) {
-        self.init()
-        self.alignment(alignment)
+        super.init(frame: .zero)
+        self.axis(.vertical)
+            .alignment(alignment)
             .distribution(distribution)
             .spacing(spacing)
         
         content().forEach { self.addArrangedSubview($0) }
+    }
+    
+    @available(*, unavailable)
+    required public init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
