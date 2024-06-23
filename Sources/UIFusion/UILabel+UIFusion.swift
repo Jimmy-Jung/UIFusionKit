@@ -26,7 +26,6 @@ public extension UIFusion where Self: UILabel {
                 self?.text = newText
             }
             .store(in: &cancellables)
-        print("UILabel cancellables: \(cancellables)")
         return self
     }
     

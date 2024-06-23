@@ -13,42 +13,28 @@ private var cancellablesKey: UInt8 = 0
 
 extension UIView {
     
-    private var syncQueue: DispatchQueue {
-        return DispatchQueue(label: "com.UIFusionKit.UIView.cancellablesQueue", attributes: .concurrent)
-    }
-    
     var cancellables: Set<AnyCancellable> {
         get {
-            return syncQueue.sync {
-                if let cancellables = objc_getAssociatedObject(self, &cancellablesKey) {
-                    print("get1, self: \(type(of: self))")
-                    return cancellables as! Set<AnyCancellable>
-                } else {
-                    print("get2, self: \(type(of: self))")
-                    let newCancellables = Set<AnyCancellable>()
-                    objc_setAssociatedObject(
-                        self,
-                        &cancellablesKey,
-                        newCancellables,
-                        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-                    )
-                    return newCancellables
-                }
-            }
-        }
-        set {
-            syncQueue.async(flags: .barrier) {
-                print("set, self: \(type(of: self))")
+            if let cancellables = objc_getAssociatedObject(self, &cancellablesKey) {
+                return cancellables as! Set<AnyCancellable>
+            } else {
+                let newCancellables = Set<AnyCancellable>()
                 objc_setAssociatedObject(
                     self,
                     &cancellablesKey,
-                    newValue,
+                    newCancellables,
                     .OBJC_ASSOCIATION_RETAIN_NONATOMIC
                 )
-                self.syncQueue.async { // 새로운 작업을 큐에 추가하여 deadlock을 피함
-                    print("cancellables111: \(self.cancellables.description)")
-                }
+                return newCancellables
             }
+        }
+        set {
+            objc_setAssociatedObject(
+                self,
+                &cancellablesKey,
+                newValue,
+                .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+            )
         }
     }
 }

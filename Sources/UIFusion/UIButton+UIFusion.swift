@@ -33,7 +33,6 @@ public extension UIFusion where Self: UIButton {
                 self.baseBackgroundColor(color)
             }
             .store(in: &cancellables)
-        print("UIButton cancellables: \(cancellables)")
         return self
     }
     
@@ -61,7 +60,6 @@ public extension UIFusion where Self: UIButton {
                 self.title(text)
             }
             .store(in: &cancellables)
-        print("UIButton cancellables: \(cancellables)")
         return self
     }
     
