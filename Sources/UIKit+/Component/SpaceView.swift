@@ -9,7 +9,7 @@ import UIKit
 
 public class SpaceView: UIView {
     
-    init(
+    public init(
         vertical: CGFloat? = nil,
         horizontal: CGFloat? = nil
     ) {
