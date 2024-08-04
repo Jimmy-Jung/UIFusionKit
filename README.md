@@ -1,6 +1,6 @@
 # 서론
 
-저는 iOS 신입 개발자로 현재 7개월째 iPad앱을 개발하며 근무 중입니다. 처음 회사에 입사했을 때 제게 주어진 미션은 기존 Objective-C 프로젝트를 Swift로 리팩토링하는 것이었습니다. 이 과정에서 많은 도전과 문제들을 마주하게 되었고, 이를 해결하기 위해 다양한 접근 방식을 시도했습니다. 이 글에서는 프로젝트 리팩토링 과정에서 직면한 문제와 이를 해결하기 위한 노력, 그리고 최종적으로 도입한 아키텍처에 대해 이야기하고자 합니다.
+저는 iOS 신입 개발자로 현재 8개월째 iPad앱을 개발하며 근무 중입니다. 처음 회사에 입사했을 때 제게 주어진 미션은 기존 Objective-C 프로젝트를 Swift로 리팩토링하는 것이었습니다. 이 과정에서 많은 도전과 문제들을 마주하게 되었고, 이를 해결하기 위해 다양한 접근 방식을 시도했습니다. 이 글에서는 프로젝트 리팩토링 과정에서 직면한 문제와 이를 해결하기 위한 노력, 그리고 최종적으로 도입한 아키텍처에 대해 이야기하고자 합니다.
 
 ### 요약
 
@@ -17,7 +17,7 @@
 
 ### 기능 개발 시퀀스 프로토콜
 
-![개발 시퀀스 프로토콜](https://prod-files-secure.s3.us-west-2.amazonaws.com/18ce1f0f-86c4-4b90-beed-8ae718b9261e/d4957821-5d64-4883-9161-59a69b798f07/%E1%84%80%E1%85%A2%E1%84%87%E1%85%A1%E1%86%AF%E1%84%89%E1%85%B5%E1%84%8F%E1%85%AF%E1%86%AB%E1%84%89%E1%85%B3%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%90%E1%85%A9%E1%84%8F%E1%85%A9%E1%86%AF.png)
+![개발시퀀스프로토콜](https://github.com/user-attachments/assets/11c874aa-be5e-4097-9745-6517fb5a0eca)
 
 개발 시퀀스 프로토콜
 
@@ -67,9 +67,10 @@
 
 ### **MVVM 아키텍처 설명**
 
-![6.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/18ce1f0f-86c4-4b90-beed-8ae718b9261e/97f5e99f-5d47-4a9d-994f-0f6d7eb9b8e6/6.png)
+![아키텍처1](https://github.com/user-attachments/assets/ebc7437b-9ad5-4db2-96e9-bd25cedce9a5)
 
-![3.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/18ce1f0f-86c4-4b90-beed-8ae718b9261e/ad975133-e2e4-4961-8d8a-fcefec42b364/3.png)
+![아키텍처2](https://github.com/user-attachments/assets/8c130ff7-b810-4e80-8e3d-3c59785b6306)
+
 
 위 이미지는 MVVM (Model-View-ViewModel) 아키텍처를 기반으로 한 클래스 다이어그램을 나타내고 있습니다. 각 컴포넌트는 명확한 역할을 가지고 있으며, 이들 간의 상호작용을 통해 프로젝트의 구조를 체계적으로 구성합니다.
 
@@ -124,9 +125,9 @@ SwiftUI에 대해 조사를 진행하던 중, 상태 관리 기반 UI 업데이�
 
 그러나 MVVM 아키텍처에 대해 공부를 하던 중 아래와 같은 이미지를 접하게 되었습니다.
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/18ce1f0f-86c4-4b90-beed-8ae718b9261e/8d4ee849-d64d-4fc4-8402-1437784ea453/Untitled.png)
+![mvvm조사](https://github.com/user-attachments/assets/9d717d7c-ba72-4d21-a0fb-de67227db3e4)
 
-[swiftui_mvvm.md](https://gist.github.com/unnnyong/439555659aa04bbbf78b2fcae9de7661?permalink_comment_id=4277488)
+![스유데이터플로우](https://github.com/user-attachments/assets/313ed2b4-952c-4d9b-8e5f-190624872ec3)
 
 SwiftUI에서 View는 이미 ViewModel의 역할을 하고 있기 때문에 ViewModel on ViewModel이라는 비효율이 발생한다는 의견이 많았습니다. Apple이 이야기하는 SwiftUI에서의 State Data Flow도 비슷한 문제를 제기했습니다.
 
@@ -136,11 +137,11 @@ SwiftUI에서의 State Data Flow
 
 위 이미지를 보니 어디선가 많이 본 그림이라는 생각이 들었습니다. 아래는 ReactorKit과 TCA의 State Data Flow입니다.
 
-![ReactorKit의 State Data Flow](https://prod-files-secure.s3.us-west-2.amazonaws.com/18ce1f0f-86c4-4b90-beed-8ae718b9261e/2d976ad8-c661-45d1-b733-95c63ba80017/Untitled.png)
+![리액터킷](https://github.com/user-attachments/assets/c9cc6eaf-3481-4a38-85ea-18f60693684e)
 
 ReactorKit의 State Data Flow
 
-![TCA의 State Data Flow](https://prod-files-secure.s3.us-west-2.amazonaws.com/18ce1f0f-86c4-4b90-beed-8ae718b9261e/0e3bdfa1-4496-4c54-9ca2-9791600329f2/Untitled.png)
+![tca](https://github.com/user-attachments/assets/3a58b5bd-c93a-489f-8919-f148844357af)
 
 TCA의 State Data Flow
 
@@ -166,7 +167,7 @@ TCA의 State Data Flow
 
 ### UIFusionKit의 State Data Flow
 
-![ViewModelFlow.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/18ce1f0f-86c4-4b90-beed-8ae718b9261e/22747fc6-2cf9-4341-9dcb-ec890f0bf9a2/ViewModelFlow.png)
+![ViewModelFlow](https://github.com/user-attachments/assets/6affddb7-bd58-4b6f-b203-f201336cad17)
 
 ReactorKit과 TCA의 단방향 플로우와 상태 기반 흐름은 유사합니다. 
 
@@ -210,7 +211,8 @@ ViewModel이 Input, Action, State 세 가지 상태를 가지고 있는 이유�
 
 ### ViewModel 기획서 예시
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/18ce1f0f-86c4-4b90-beed-8ae718b9261e/711f3689-f0fc-46e7-8dfc-9ef88abed5c2/Untitled.png)
+<img width="231" alt="예시화면" src="https://github.com/user-attachments/assets/f08a878a-c23c-40fc-b8f9-42cdc25b9373">
+
 
 위 화면에서는 Increase, Decrease, Reset, Show 버튼이 있습니다. 
 
