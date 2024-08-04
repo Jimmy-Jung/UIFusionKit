@@ -18,21 +18,8 @@ public extension UIFusion where Self: UIButton {
     
     @available(iOS 15.0, *)
     @discardableResult
-    func baseBackgroundColor(_ color: UIColor) -> Self {
+    func baseBackgroundColor(_ color: UIColor?) -> Self {
         self.configuration?.baseBackgroundColor = color
-        return self
-    }
-    
-    @available(iOS 15.0, *)
-    @discardableResult
-    func baseBackgroundColor(_ publisher: Published<UIColor>.Publisher) -> Self {
-        publisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] color in
-                guard let self = self else { return }
-                self.baseBackgroundColor(color)
-            }
-            .store(in: &cancellables)
         return self
     }
     
@@ -47,19 +34,6 @@ public extension UIFusion where Self: UIButton {
     @discardableResult
     func title(_ text: String) -> Self {
         self.configuration?.title = text
-        return self
-    }
-    
-    @available(iOS 15.0, *)
-    @discardableResult
-    func title(_ publisher: Published<String>.Publisher) -> Self {
-        publisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] text in
-                guard let self = self else { return }
-                self.title(text)
-            }
-            .store(in: &cancellables)
         return self
     }
     
