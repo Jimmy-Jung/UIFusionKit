@@ -127,11 +127,9 @@ SwiftUI에 대해 조사를 진행하던 중, 상태 관리 기반 UI 업데이�
 
 ![mvvm조사](https://github.com/user-attachments/assets/9d717d7c-ba72-4d21-a0fb-de67227db3e4)
 
-![스유데이터플로우](https://github.com/user-attachments/assets/313ed2b4-952c-4d9b-8e5f-190624872ec3)
-
 SwiftUI에서 View는 이미 ViewModel의 역할을 하고 있기 때문에 ViewModel on ViewModel이라는 비효율이 발생한다는 의견이 많았습니다. Apple이 이야기하는 SwiftUI에서의 State Data Flow도 비슷한 문제를 제기했습니다.
 
-![SwiftUI에서의 State Data Flow](https://prod-files-secure.s3.us-west-2.amazonaws.com/18ce1f0f-86c4-4b90-beed-8ae718b9261e/321bfbcc-7a2d-4999-918b-0a10a69254e0/Untitled.png)
+![스유데이터플로우](https://github.com/user-attachments/assets/313ed2b4-952c-4d9b-8e5f-190624872ec3)
 
 SwiftUI에서의 State Data Flow
 
@@ -226,7 +224,7 @@ ViewModel이 Input, Action, State 세 가지 상태를 가지고 있는 이유�
 
 ### 입력&출력
 
-**Input: ❇️**
+**Input:** 🟩
 
 **Action:** ✴️
 
@@ -236,25 +234,25 @@ ViewModel이 Input, Action, State 세 가지 상태를 가지고 있는 이유�
 
 **주요 기능**
 
-**❇️: increase** 버튼 선택
+**❇🟩: increase** 버튼 선택
 
 - **✴️:** increaseValue
     - **🟦:** value 값이 1 증가합니다.
     - 🟦: isReset 값이 false로 설정됩니다.
 
-**❇️:** decrease 버튼 선택
+**❇🟩:** decrease 버튼 선택
 
 - **✴️**: decreaseValue
     - **🟦:** value 값이 1 감소합니다.
     - 🟦: isReset 값이 false로 설정됩니다.
 
-**❇️** reset 버튼 선택
+**🟩** reset 버튼 선택
 
 - **✴️**: resetValue
     - **🟦:** value 값이 0으로 초기화됩니다.
     - **🟦:** isReset 값이 true로 설정됩니다.
 
-**❇️**: show 버튼 선택
+**🟩**: show 버튼 선택
 
 - **✴️**: showAlert
     - **🟦:** showAlert 값이 트리거됩니다.
