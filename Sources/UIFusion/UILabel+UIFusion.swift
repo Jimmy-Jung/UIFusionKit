@@ -17,19 +17,6 @@ public extension UIFusion where Self: UILabel {
     }
     
     @discardableResult
-    func text(
-        _ publisher: Published<String>.Publisher
-    ) -> Self {
-        publisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] newText in
-                self?.text = newText
-            }
-            .store(in: &cancellables)
-        return self
-    }
-    
-    @discardableResult
     func font(_ font: UIFont) -> Self {
         self.font = font
         return self
