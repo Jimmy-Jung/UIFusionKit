@@ -21,7 +21,7 @@ enum CounterAction {
     case showAlert
 }
 
-class CounterState {
+class CounterState: ObservableObject {
     @Published var value: Int = 0
     @Published var isReset: Bool = false
     @Published var showAlert: Void = ()
@@ -33,7 +33,7 @@ Action == CounterAction,
 State == CounterState {}
 
 final class DefaultCounterViewModel: CounterViewModel {
-    var state: State = .init()
+    @Published var state: State = .init()
     var cancellabels: Set<AnyCancellable> = .init()
     
     
