@@ -1,6 +1,6 @@
+## 미리보기
 ### UIFusionKit의 State Data Flow
-
-![ViewModelFlow](https://github.com/user-attachments/assets/6affddb7-bd58-4b6f-b203-f201336cad17)
+<img width="831" alt="ViewModelFlow" src="https://github.com/user-attachments/assets/6affddb7-bd58-4b6f-b203-f201336cad17">
 
 ReactorKit과 TCA의 단방향 플로우와 상태 기반 흐름은 유사합니다. 
 
@@ -41,22 +41,21 @@ extension ViewModelProtocol {
 ### MVVM 조사
 
 MVVM 아키텍처에 대해 공부를 하던 중 아래와 같은 이미지를 접하게 되었습니다.
-
-![mvvm조사](https://github.com/user-attachments/assets/9d717d7c-ba72-4d21-a0fb-de67227db3e4)
+<img width="831" alt="mvvm조사" src="https://github.com/user-attachments/assets/9d717d7c-ba72-4d21-a0fb-de67227db3e4">
 
 SwiftUI에서 View는 이미 ViewModel의 역할을 하고 있기 때문에 ViewModel on ViewModel이라는 비효율이 발생한다는 의견이 많았습니다. Apple이 이야기하는 SwiftUI에서의 State Data Flow도 비슷한 문제를 제기했습니다.
 
-![스유데이터플로우](https://github.com/user-attachments/assets/313ed2b4-952c-4d9b-8e5f-190624872ec3)
+<img width="831" alt="스유데이터플로우" src="https://github.com/user-attachments/assets/313ed2b4-952c-4d9b-8e5f-190624872ec3">
 
 SwiftUI에서의 State Data Flow
 
 위 이미지를 보니 어디선가 많이 본 그림이라는 생각이 들었습니다. 아래는 ReactorKit과 TCA의 State Data Flow입니다.
 
-![리액터킷](https://github.com/user-attachments/assets/c9cc6eaf-3481-4a38-85ea-18f60693684e)
+<img width="831" alt="스유데이터플로우" src="https://github.com/user-attachments/assets/c9cc6eaf-3481-4a38-85ea-18f60693684e">
 
 ReactorKit의 State Data Flow
 
-![tca](https://github.com/user-attachments/assets/3a58b5bd-c93a-489f-8919-f148844357af)
+<img width="831" alt="tca" src="https://github.com/user-attachments/assets/3a58b5bd-c93a-489f-8919-f148844357af">
 
 TCA의 State Data Flow
 
@@ -82,7 +81,7 @@ TCA의 State Data Flow
 
 ### UIFusionKit의 State Data Flow
 
-![ViewModelFlow](https://github.com/user-attachments/assets/6affddb7-bd58-4b6f-b203-f201336cad17)
+<img width="831" alt="ViewModelFlow" src="https://github.com/user-attachments/assets/6affddb7-bd58-4b6f-b203-f201336cad17">
 
 ReactorKit과 TCA의 단방향 플로우와 상태 기반 흐름은 유사합니다. 
 
@@ -124,9 +123,10 @@ perform(_ action:) 메서드는 특정 로직을 수행하고 State 상태를 �
 
 ViewModel이 Input, Action, State 세 가지 상태를 가지고 있는 이유는, 기획팀, 디자인팀, 개발팀, QA팀에서 ViewModel을 공통적으로 개발하고 사용하기 위합입니다.
 
+
 ### ViewModel 기획서 예시
 
-<img width="231" alt="예시화면" src="https://github.com/user-attachments/assets/f08a878a-c23c-40fc-b8f9-42cdc25b9373">
+<img width="331" alt="예시화면" src="https://github.com/user-attachments/assets/f08a878a-c23c-40fc-b8f9-42cdc25b9373">
 
 
 위 화면에서는 Increase, Decrease, Reset, Show 버튼이 있습니다. 
@@ -138,6 +138,7 @@ ViewModel이 Input, Action, State 세 가지 상태를 가지고 있는 이유�
 기획서에서 어떤 Input이 입력됐을 때 어떤 Action을 취하고 어떤 화면의 State가 바뀌어야 하는지 요구사항이 필요합니다. 
 
 아래와 같은 방법으로 간단하게 기획서를 작성해볼 수 있습니다.
+
 
 ### 입력&출력
 
