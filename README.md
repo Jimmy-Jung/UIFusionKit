@@ -1,3 +1,36 @@
+### UIFusionKit의 State Data Flow
+
+![ViewModelFlow](https://github.com/user-attachments/assets/6affddb7-bd58-4b6f-b203-f201336cad17)
+
+ReactorKit과 TCA의 단방향 플로우와 상태 기반 흐름은 유사합니다. 
+
+하지만 차이점이 있다면 ViewModel을 사용하는 부분에 있어서 특정 라이브러리나 특정 프레임워크에 종속적이지 않도록 개발했습니다.
+
+### ViewModelProtocol
+
+```swift
+protocol ViewModelProtocol: AnyObject {
+    associatedtype Input
+    associatedtype Action
+    associatedtype State
+
+    var state: State { get set }
+    func send(_ input: Input)
+    func transform(_ input: Input) -> [Action]
+    func perform(_ action: Action)
+}
+
+extension ViewModelProtocol {
+    func send(_ input: Input) {
+            transform(input)
+                .forEach { action in
+                    perform(action)
+                }
+    }
+}
+```
+
+
 ## **UIFusionKit 개발 및 도입**
 
 ### **문제 발견**
