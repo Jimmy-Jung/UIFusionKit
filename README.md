@@ -39,8 +39,8 @@ UIFusionKit은 다음과 같은 장점이 있습니다:
 # **UIFusionKit 개발 및 도입**
 
 ## **문제 발견**
-
-새로운 아키텍처 위에서 신규 기능을 개발하면서 몇 가지 불편함이 있었습니다. 
+[새로운 아키텍처](https://github.com/Jimmy-Jung/ReadeMe/tree/main/CleanArchitecture)
+ 위에서 신규 기능을 개발하면서 몇 가지 불편함이 있었습니다. 
 그 중 하나는 UIKit에서 InterActive한 Animation을 적용하기 위해 신경 써야 할 부분이 너무 많다는 것이었습니다. 
 애니메이션 효과를 많이 사용하게 되는 화면은 부분적으로 SwiftUI로 개발하기 위해 
 UIKit과 SwiftUI에서 상호 운영이 가능한 ViewModel이 필요했습니다.
