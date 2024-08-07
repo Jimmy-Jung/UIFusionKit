@@ -51,7 +51,8 @@ MVVM 아키텍처에 대해 공부를 하던 중 아래와 같은 이미지를 �
 <img width="631" alt="mvvm조사" src="https://github.com/user-attachments/assets/9d717d7c-ba72-4d21-a0fb-de67227db3e4">
 
 SwiftUI에서 View는 이미 ViewModel의 역할을 하고 있기 때문에 ViewModel on ViewModel이라는 비효율이 발생한다는 의견이 많았습니다. 
-Apple이 이야기하는 SwiftUI에서의 State Data Flow도 비슷한 문제를 제기했습니다.
+
+Apple의 SwiftUI에서 State Data Flow는 기존에 존재하던 ViewModel이라는 계층을 통한 단방향 데이터 흐름을 구현하고 있습니다.
 
 <img width="631" alt="스유데이터플로우" src="https://github.com/user-attachments/assets/313ed2b4-952c-4d9b-8e5f-190624872ec3">
 
@@ -74,10 +75,16 @@ TCA의 State Data Flow
 2. State
 3. Mutation
 
-기존 UIKit에서 많은 사람들이 MVVM 아키텍처를 사용할 때 ReactorKit을 많이 사용하는 이유를 조사했습니다. 
-MVVM 아키텍처는 구현 방법에 대한 규칙이 없어서 통일성과 데이터 흐름에 대한 추적이 어려운 문제가 있었습니다. 
+기존 UIKit에서 많은 사람들이 MVVM 아키텍처를 사용할 때 ReactorKit을 많이 사용하는 이유를 조사했습니다.
+
+MVC 아키텍처를 사용해서 퍼블리셔와 프론트개발자 간에 협업을 위해서 View와 비즈니스로직을 분리하는 방법을 사용할 수 있지만,
+ViewController에서의 담당하는 책임이 많아짐으로써 이를 테스트하기엔 부담이 많아진다는 이유가 있습니다.
+
+또한 MVVM 아키텍처는 구현 방법에 대한 규칙이 없어서 통일성과 데이터 흐름에 대한 추적이 어려운 문제가 있었습니다. 
+
 이에 반해 ReactorKit은 사용해야 하는 규칙이 정해져 있고, 
 단방향 데이터 흐름으로 뷰와 모델의 상태 변화를 추적하기 용이하다는 장점이 있습니다.
+
 이러한 이유들로 인해 MVVM 하면 단방향 흐름과 Composable Architecture를 많이 사용하는 것 같았고, 
 자연스럽게 SwiftUI에서도 비슷한 구조를 가지게 된 것 같습니다.
 
@@ -90,6 +97,7 @@ MVVM 아키텍처는 구현 방법에 대한 규칙이 없어서 통일성과 �
 
 ReactorKit은 View라는 프로토콜을 채택하고 RxSwift를 사용하기 때문에 SwiftUI와 함께 사용할 수 없고, 
 TCA는 View의 상태 기반을 사용하기 때문에 UIKit에서 사용할 수 없습니다.
+
 저희 회사 프로젝트에서는 기존 기능은 UIKit으로 유지하고, 
 신규 기능은 SwiftUI로 개발해야 하는 상황에서 어떤 디자인 아키텍처 라이브러리를 사용해야 할지 혼란스러웠습니다. 
 그래서 Combine을 사용하여 Composable Architecture를 만들어 UIKit과 SwiftUI의 통합을 위해 UIFusionKit이라는 라이브러리를 개발하게 되었습니다.
@@ -135,6 +143,7 @@ extension ViewModelProtocol {
 
 이로써 RxSwift, Combine에 종속적이지 않고, 
 UIKit과 SwiftUI에 종속적이지 않은 독립적인 디자인 아키텍처를 적용할 수 있습니다.
+
 ViewModel이 Input, Action, State 세 가지 상태를 가지고 있는 이유는, 
 기획팀, 디자인팀, 개발팀, QA팀에서 ViewModel을 공통적으로 개발하고 사용하기 위합입니다.
 
@@ -251,7 +260,7 @@ final class DefaultCounterViewModel: CounterViewModel {
 
 ## 기획서 활용
 
-위위 같은 입력&액션&상태 기획서는 아래의 방법을 통해 다양한 부서와 협력이 가능합니다.
+위와 같은 입력&액션&상태 기획서는 아래의 방법을 통해 다양한 부서와 협력이 가능합니다.
 
 <img width="631" alt="기능개발시퀀스다이어그램" src="https://github.com/user-attachments/assets/cb5fd830-8ddb-4c1c-81ec-81d7ca5ddf17">
 
