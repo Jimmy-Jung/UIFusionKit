@@ -84,6 +84,13 @@ final class CounterViewController: UIViewController {
     
     private func bindInput() {
         increaseButton
+            .publisher(for: \.tapPublisher)
+            .sink(with: self) { owner, output in
+                owner.viewModel.send(.increase)
+            }
+            .store(in: &cancellables)
+        
+        increaseButton
             .addAction(self) { owner in
                 owner.viewModel.send(.increase)
             }

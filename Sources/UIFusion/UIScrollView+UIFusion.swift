@@ -15,7 +15,7 @@ extension UIScrollView {
     }
 }
 
-extension UIFusion where Self: UIScrollView {
+public extension UIFusion where Self: UIScrollView {
     func scroll(to direction: ScrollDirection) {
         DispatchQueue.main.async {
             switch direction {

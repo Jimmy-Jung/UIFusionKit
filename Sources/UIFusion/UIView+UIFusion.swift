@@ -11,7 +11,7 @@ import Combine
 
 private var cancellablesKey: UInt8 = 0
 
-extension UIView {
+public extension UIView {
     
     var cancellables: Set<AnyCancellable> {
         get {

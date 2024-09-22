@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol ViewModelProtocol: AnyObject {
+public protocol ViewModelProtocol: AnyObject {
     associatedtype Input
     associatedtype Action
     associatedtype State
@@ -18,7 +18,7 @@ protocol ViewModelProtocol: AnyObject {
     func perform(_ action: Action)
 }
 
-extension ViewModelProtocol {
+public extension ViewModelProtocol {
     func send(_ input: Input) {
             transform(input)
                 .forEach { action in
