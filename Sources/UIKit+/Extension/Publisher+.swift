@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-extension Publisher {
+public extension Publisher {
     func withUnretained<T: AnyObject>(_ object: T) -> Publishers.CompactMap<Self, (T, Self.Output)> {
         compactMap { [weak object] output in
             guard let object else { return nil }
@@ -34,7 +34,7 @@ extension Publisher {
     }
 }
 
-extension Publisher where Self.Failure == Never {
+public extension Publisher where Self.Failure == Never {
     func sink<T: AnyObject>(
         with owner: T,
         _ receiveValue: @escaping (_ owner: T, _ output: Self.Output) -> Void
@@ -46,7 +46,7 @@ extension Publisher where Self.Failure == Never {
     }
 }
 
-extension Publisher where Failure == Never {
+public extension Publisher where Failure == Never {
     
     func bind(on object: UIButton, to keyPath: WritableKeyPath<UIButton.Configuration, Output?>) -> AnyCancellable {
         sink { [weak object] value in
