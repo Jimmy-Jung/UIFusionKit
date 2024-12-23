@@ -2,7 +2,8 @@
 ### UIFusionKit의 State Data Flow
 <img width="831" alt="ViewModelFlow" src="https://github.com/user-attachments/assets/6affddb7-bd58-4b6f-b203-f201336cad17">
 
-ReactorKit과 TCA의 단방향 플로우와 상태 기반 흐름은 유사합니다. 
+ReactorKit과 TCA의 단방향 플로우와 상태 기반 흐름은 유사합니다.
+
 하지만 차이점이 있다면 ViewModel을 사용하는 부분에 있어서 특정 라이브러리나 특정 프레임워크에 종속적이지 않도록 개발했습니다.
 
 ### ViewModelProtocol
@@ -39,76 +40,82 @@ UIFusionKit은 다음과 같은 장점이 있습니다:
 # **UIFusionKit 개발 및 도입**
 
 ## **문제 발견**
-[새로운 아키텍처](https://github.com/Jimmy-Jung/ReadeMe/tree/main/CleanArchitecture)
- 위에서 신규 기능을 개발하면서 몇 가지 불편함이 있었습니다. 
-그 중 하나는 UIKit에서 InterActive한 Animation을 적용하기 위해 신경 써야 할 부분이 너무 많다는 것이었습니다. 
-애니메이션 효과를 많이 사용하게 되는 화면은 부분적으로 SwiftUI로 개발하기 위해 
-UIKit과 SwiftUI에서 상호 운영이 가능한 ViewModel이 필요했습니다.
+[새로운 아키텍처](https://github.com/Jimmy-Jung/ReadeMe/tree/main/CleanArchitecture) 위에서 신규 기능을 개발하면서 가장 크게 느낀 문제는, 
+ 
+UIKit에서 인터랙티브한 애니메이션을 적용하기 위해 신경 쓸 부분이 너무 많다는 것이었습니다. 
+ 
+일부 화면에서는 애니메이션 효과가 중요했지만, 동시에 SwiftUI의 장점을 활용하고자 UIKit과 SwiftUI를 혼용해야 했습니다. 
+
+자연스럽게 UIKit과 SwiftUI에서 동일하게 동작할 수 있는 ViewModel이 필요해졌습니다.
 
 ## MVVM 조사
 
-MVVM 아키텍처에 대해 공부를 하던 중 아래와 같은 이미지를 접하게 되었습니다.
+이 문제를 해결하기 위해 MVVM 아키텍처를 다시 살펴보았습니다. 
+일반적으로 MVVM은 퍼블리셔나 디자이너와 협업하기 위해 View 로직과 비즈니스 로직을 분리하는 데 활용됩니다. 
+
 <img width="631" alt="mvvm조사" src="https://github.com/user-attachments/assets/9d717d7c-ba72-4d21-a0fb-de67227db3e4">
 
-SwiftUI에서 View는 이미 ViewModel의 역할을 하고 있기 때문에 ViewModel on ViewModel이라는 비효율이 발생한다는 의견이 많았습니다. 
+하지만 SwiftUI는 이미 View가 ViewModel 역할을 일정 부분 수행하고 있어 ‘ViewModel on ViewModel’이라는 비효율 논란이 있었습니다.
+SwiftUI는 이미 View가 ViewModel 역할을 일정 부분 수행하고 있어 ‘ViewModel on ViewModel’이라는 비효율 논란이 있었습니다.
 
-Apple의 SwiftUI에서 State Data Flow는 기존에 존재하던 ViewModel이라는 계층을 통한 단방향 데이터 흐름을 구현하고 있습니다.
+왜 논란이 되었을까 고민해보니, 전통적인 MVVM에서 ViewModel이 담당해야 할 상태 관리와 로직을 SwiftUI가 자체적으로 ‘View에서’ 대부분 처리하기 때문에,
+별도의 ViewModel을 추가로 두는 경우 “중복 구조” 혹은 “이중 관리”가 발생할 가능성이 높습니다. 
+
+이는 코드 규모가 불필요하게 커지거나, 이벤트 흐름이 View와 ViewModel 사이에서 중첩되어 추적이 어려워지는 문제로 이어질 수 있습니다.
 
 <img width="631" alt="스유데이터플로우" src="https://github.com/user-attachments/assets/313ed2b4-952c-4d9b-8e5f-190624872ec3">
 
 SwiftUI에서의 State Data Flow
 
-위 이미지를 보니 어디선가 많이 본 그림이라는 생각이 들었습니다. 
-아래는 ReactorKit과 TCA의 State Data Flow입니다.
+하지만 SwiftUI가 제공하는 단방향 상태 관리(State Data Flow)를 살펴보면,
+이는 기존 MVVM에서 강조하던 ‘단방향 데이터 흐름’을 SwiftUI 문법에 맞춰 재해석해 이미 내장해두었다고 볼 수 있습니다. 
 
-<img width="631" alt="스유데이터플로우" src="https://github.com/user-attachments/assets/c9cc6eaf-3481-4a38-85ea-18f60693684e">
+결국, 굳이 별도의 ViewModel 계층을 두지 않고도 View가 @State, @Binding, @ObservedObject(또는 @StateObject) 등을 통해 상태를 관찰하고, 
+상태 변화 시 UI를 자동 갱신하도록 하는 구조가 마련되어 있습니다.
+
+즉, SwiftUI만 단독으로 사용한다면 전통적인 “ViewModel on ViewModel” 문제를 크게 걱정하지 않아도 되는 것이죠.
+View가 이미 상태와 로직 일부를 책임져 불필요한 중복을 줄여 주기 때문입니다.
+
+다만 대규모 프로젝트나 복잡한 비즈니스 로직을 처리해야 할 경우에는,
+TCA(The Composable Architecture)나 Clean Architecture 등을 통해 아키텍처적 계층 분리를 더 선명히 가져가기도 합니다. 
+
+이때 SwiftUI가 제공하는 단방향 상태 관리와 자동 UI 갱신 기능을 그대로 활용하면서, 
+비즈니스 로직을 담은 별도 계층(Model이나 Domain 레이어 등)을 분리해 “ViewModel on ViewModel” 문제가 다시 불거지지 않도록 할 수 있습니다.
+
+결국 ‘ViewModel on ViewModel’ 논란은 SwiftUI가 원래 MVVM-like 구조를 갖춘 상태에서, 개발자가 추가로 ViewModel 계층을 과도하게 만들면 생기는 중복이라는 결론을 얻었습니다.
+SwiftUI만의 State Data Flow를 충분히 이해하고 활용한다면, 효율적인 상태 관리가 가능하고, 필요 시 다른 아키텍처 기법(Clean Architecture, TCA 등)을 조합해 유연하게 확장할 수도 있습니다.
+
+
+SwiftUI만으로 앱을 구성한다면, View가 일부 ViewModel 역할을 흡수하여 ‘ViewModel on ViewModel’ 문제를 크게 줄일 수 있습니다. 
+
+하지만 기존 프로젝트나 UIKit과 병행 사용해야 하는 상황이라면, SwiftUI의 단방향 상태 관리만으로는 일부 한계가 있을 수 있습니다.
+
+<img width="631" alt="ReactorKit의 State Data Flow" src="https://github.com/user-attachments/assets/c9cc6eaf-3481-4a38-85ea-18f60693684e">
 
 ReactorKit의 State Data Flow
+
+특히 기존 UIKit 프로젝트에서 MVVM을 적용할 때는 ReactorKit과 같은 라이브러리를 자주 사용하는데, 
+이는 사용 규칙이 명확하고 단방향 데이터 플로우를 통해 뷰와 모델 간 상태 변화를 쉽게 추적할 수 있기 때문입니다.
+
+그러나 ReactorKit은 RxSwift 기반의 View 프로토콜을 사용하기 때문에 SwiftUI와 바로 호환하기 어려운 문제가 있고, 
 
 <img width="631" alt="tca" src="https://github.com/user-attachments/assets/3a58b5bd-c93a-489f-8919-f148844357af">
 
 TCA의 State Data Flow
 
-위 세 가지 구조의 공통점은 다음과 같습니다:
+TCA는 SwiftUI에 특화된 구조를 기반으로 하므로 UIKit에 적용하기 힘든 부분이 존재합니다.
 
-1. 단방향 흐름
-2. State
-3. Mutation
-
-기존 UIKit에서 많은 사람들이 MVVM 아키텍처를 사용할 때 ReactorKit을 많이 사용하는 이유를 조사했습니다.
-
-MVC 아키텍처를 사용해서 퍼블리셔와 프론트개발자 간에 협업을 위해서 View와 비즈니스로직을 분리하는 방법을 사용할 수 있지만,
-ViewController에서의 담당하는 책임이 많아짐으로써 이를 테스트하기엔 부담이 많아진다는 이유가 있습니다.
-
-또한 MVVM 아키텍처는 구현 방법에 대한 규칙이 없어서 통일성과 데이터 흐름에 대한 추적이 어려운 문제가 있었습니다. 
-
-이에 반해 ReactorKit은 사용해야 하는 규칙이 정해져 있고, 
-단방향 데이터 흐름으로 뷰와 모델의 상태 변화를 추적하기 용이하다는 장점이 있습니다.
-
-이러한 이유들로 인해 MVVM 하면 단방향 흐름과 Composable Architecture를 많이 사용하는 것 같았고, 
-자연스럽게 SwiftUI에서도 비슷한 구조를 가지게 된 것 같습니다.
-
-## Composable Architecture 구상
-
-그렇다면 SwiftUI에서 View가 이미 ViewModel의 역할을 하고 있다면 왜 TCA를 사용하게 되는 것인지 고민해봤습니다. 
-이는 ReactorKit을 사용하는 것과 마찬가지로 사용해야 하는 규칙을 정하기 위해서 사용하는 것이라고 생각했습니다.
-
-하지만 SwiftUI에서는 ReactorKit을 사용할 수 없고, UIKit에서는 TCA를 사용할 수 없는 문제가 있었습니다. 
-
-ReactorKit은 View라는 프로토콜을 채택하고 RxSwift를 사용하기 때문에 SwiftUI와 함께 사용할 수 없고, 
-TCA는 View의 상태 기반을 사용하기 때문에 UIKit에서 사용할 수 없습니다.
-
-저희 회사 프로젝트에서는 기존 기능은 UIKit으로 유지하고, 
-신규 기능은 SwiftUI로 개발해야 하는 상황에서 어떤 디자인 아키텍처 라이브러리를 사용해야 할지 혼란스러웠습니다. 
-그래서 Combine을 사용하여 Composable Architecture를 만들어 UIKit과 SwiftUI의 통합을 위해 UIFusionKit이라는 라이브러리를 개발하게 되었습니다.
+다시 말해, SwiftUI와 UIKit을 동시에 쓰거나, 기존의 UIKit 코드를 단계적으로 SwiftUI로 전환하려는 팀은 ReactorKit이나 TCA 단독으로는 대응하기 어려운 지점이 발생하게 됩니다. 
+따라서 이러한 문제를 해결하고자, SwiftUI와 UIKit 모두에서 동일한 ViewModel을 사용하고 단방향 흐름을 유지하기 위한 별도의 접근법이 필요해졌습니다.
 
 
 ## UIFusionKit의 State Data Flow
 
 <img width="631" alt="ViewModelFlow" src="https://github.com/user-attachments/assets/6affddb7-bd58-4b6f-b203-f201336cad17">
 
-ReactorKit과 TCA의 단방향 플로우와 상태 기반 흐름은 유사합니다. 
-하지만 차이점이 있다면 ViewModel을 사용하는 부분에 있어서 특정 라이브러리나 특정 프레임워크에 종속적이지 않도록 개발했습니다.
+### ViewModelFlow
+
+ReactorKit과 TCA의 단방향 플로우, 상태 기반 흐름과 유사하지만, 특정 라이브러리나 특정 프레임워크에 종속적이지 않도록 구현한 점이 핵심입니다.
 
 ### ViewModelProtocol
 
@@ -136,29 +143,22 @@ extension ViewModelProtocol {
 
 ## ViewModel 사용 방법
 
-- viewModel의 send(_ input:) 메서드를 통해 Input Event를 전달합니다.
-- send(_ input:) 메서드는 input을 받아 transform(_ input:) 메서드를 실행하고 Input → Action으로 이벤트를 변형시킵니다. 
-- transform(_ input:) 메서드는 여러 Action 이벤트를 발생시킬 수 있습니다. 
-- perform(_ action:) 메서드는 특정 로직을 수행하고 State 상태를 변경시킬 수 있고, SideEffect를 발생시킬 수 있습니다.
+1.	viewModel.send(_ input:) 메서드를 통해 Input Event를 전달합니다.
+2.	transform(_ input:) 메서드를 통해 Input → Action으로 변환합니다. (하나의 Input이 여러 Action으로 분기 가능)
+3.	perform(_ action:) 메서드에서 State를 변경하거나 SideEffect를 발생시킵니다.
 
-이로써 RxSwift, Combine에 종속적이지 않고, 
-UIKit과 SwiftUI에 종속적이지 않은 독립적인 디자인 아키텍처를 적용할 수 있습니다.
+이를 통해 RxSwift, Combine 등 특정 라이브러리나 UIKit, SwiftUI에 구애받지 않는 독립적인 디자인 아키텍처를 유지할 수 있습니다.
 
-ViewModel이 Input, Action, State 세 가지 상태를 가지고 있는 이유는, 
-기획팀, 디자인팀, 개발팀, QA팀에서 ViewModel을 공통적으로 개발하고 사용하기 위합입니다.
+### ViewModel이 Input, Action, State 세 가지 상태를 가지는 이유
 
+기획팀·디자인팀·개발팀·QA팀이 공통 기획서를 기준으로 각자 역할에 맞춰 협업하기 위함입니다. 
+예컨대 기획서는 입력(Input)과 상태(State)에 대한 정의를 중심으로 잡고, 그에 맞춰 Action(구현 로직)을 설계·개발·테스트할 수 있습니다.
 
 ## ViewModel 기획서 예시
 
 <img width="331" alt="예시화면" src="https://github.com/user-attachments/assets/f08a878a-c23c-40fc-b8f9-42cdc25b9373">
 
-
-위 화면에서는 Increase, Decrease, Reset, Show 버튼이 있습니다. 
-각 버튼을 눌렀을 때 화면의 상태를 변경시켜야 합니다. 
-이 화면을 만들기 위해 각 버튼을 눌렀을 때 어떤 변화를 발생시켜야 하는지 기획서가 필요합니다. 
-기획서에서 어떤 Input이 입력됐을 때 어떤 Action을 취하고 어떤 화면의 State가 바뀌어야 하는지 요구사항이 필요합니다. 
-아래와 같은 방법으로 간단하게 기획서를 작성해볼 수 있습니다.
-
+예시 화면: Increase, Decrease, Reset, Show 버튼
 
 ### 입력&상태
 
@@ -190,9 +190,7 @@ ViewModel이 Input, Action, State 세 가지 상태를 가지고 있는 이유�
 - **✴️**: showAlert
     - **🟦:** showAlert 값이 트리거됩니다.
 
-위와 같은 방식으로 ViewModel 기획서를 작성하게 되면
-
-개발팀에서는 1:1대응되는 ViewModel을 다음과 같이 개발할 수 있습니다.
+이를 바탕으로 개발팀은 아래와 같은 ViewModel을 작성할 수 있습니다.
 
 ```swift
 enum CounterInput {
@@ -260,58 +258,31 @@ final class DefaultCounterViewModel: CounterViewModel {
 
 ## 기획서 활용
 
-위와 같은 입력&액션&상태 기획서는 아래의 방법을 통해 다양한 부서와 협력이 가능합니다.
-
-<img width="631" alt="기능개발시퀀스다이어그램" src="https://github.com/user-attachments/assets/cb5fd830-8ddb-4c1c-81ec-81d7ca5ddf17">
-
-1. 기획팀에서 입력&상태 기반 기획서를 만들기 위해 개발팀에 도메인 자료를 요청합니다.
-2. 도메인 자료를 기반으로 입력, 액션, 상태 기반 디자인을 제작합니다.
-3. 기획서는 개발팀에게 넘어가고 액션에 대한 상세한 설명을 추가로 작성합니다.
-4. 기획서는 QA팀에게 넘어가고 기획서를 기반으로 테스트 시나리오를 작성합니다.
-5. 테스트 시나리오는 개발팀에게 넘어가고 시나리오를 기반으로 테스트코드를 작성합니다.
-6. 이제 상급 개발자는 ViewModel을 개발하고, 초급 개발자는 퍼블리싱작업을 시작합니다.
-7. View와 ViewModel의 바인딩을 완료하고 UI 테스트코드를 작성합니다.
+1.	기획팀은 화면에서 발생하는 입력(Input)과 이에 따른 상태(State)를 정의합니다.
+2.	개발팀은 해당 기획서의 액션(Action)을 구체화하여 ViewModel에 로직을 구현합니다.
+3.	QA팀은 상태(State)를 기준으로 테스트 시나리오를 작성합니다.
+4.	디자인팀은 요구사항에 맞춰 UI를 설계합니다.
 
 이로서 하나의 기획서를 모든 부서가 공통으로 사용하면서 협력해서 기획서를 발전시켜나갈 수 있게됩니다.
-입력&액션&상태 기획서를 인터페이스 형태로 작성함으로써 다음과 같은 효과를 누릴 수 있게 되었습니다.
+입력(Input) & 상태(State) 기획서를 인터페이스 형태로 작성함으로써 다음과 같은 효과를 누릴 수 있게 되었습니다.
 
-### SRP (단일 책임 원칙)
-
-입력&액션&상태 기획서를 통해 각 부서가 SRP를 준수할 수 있게 됩니다. 
-기획팀은 입력과 상태에 집중하고, 개발팀은 액션과 상태 변화에 집중하며, QA팀은 상태를 기반으로 테스트 시나리오를 작성합니다. 
-이렇게 각 부서가 자신들의 역할에만 집중하여 책임을 분산시킬 수 있습니다.
-
-### OCP (개방 폐쇄 원칙)
-
-기획서는 입력, 액션, 상태라는 추상적인 인터페이스로 작성됩니다. 
-따라서, 기존 기획서를 수정하지 않고도 새로운 기능을 추가하거나 제거할 수 있습니다. 
-이는 기획서가 새로운 요구사항에 대해 열려 있고, 기존 구현을 수정하지 않아도 되므로 OCP를 만족하게 됩니다.
-
-### LSP (리스코프 치환 원칙)
-
-LSP는 프로그램의 객체는 프로그램의 정확성을 깨뜨리지 않으면서 하위 타입으로 대체할 수 있어야 한다는 원칙입니다. 
-입력&액션&상태 기획서를 통해 작성된 ViewModel들은 하위 타입으로 치환될 수 있어야 합니다. 
-
-즉, 입력과 상태의 형태가 변하지 않도록 함으로써 LSP를 준수할 수 있습니다. 
-이를 통해 개발팀은 기존 ViewModel을 기반으로 새로운 ViewModel을 쉽게 확장할 수 있습니다.
-
-### ISP (인터페이스 분리 원칙)
-
-기획서는 입력, 액션, 상태라는 인터페이스로 작성되기 때문에, 각 부서는 자신에게 필요한 인터페이스만 신경 쓰면 됩니다. 
-개발팀은 액션과 상태 변화에만 집중하고, QA팀은 상태를 기반으로 테스트를 작성합니다. 
-이렇게 각 부서가 불필요한 인터페이스를 고려하지 않도록 하여 ISP를 만족시킬 수 있습니다.
-
-### DIP (의존성 역전 원칙)
-
-ViewModel은 특정 구현체가 아닌 추상화된 인터페이스를 통해 입력을 받고, 상태를 변경합니다. 
-이는 의존성이 구체적인 클래스가 아닌 추상화된 인터페이스로 향하게 함으로써 DIP를 만족합니다. 
-이를 통해 UI와 비즈니스 로직을 분리하고, 유연한 코드 구조를 유지할 수 있습니다.
-
-위와 같이 SOLID 원칙을 입력&액션&상태 기획서에 적용하면 각 부서가 명확한 역할 분담을 통해 협력할 수 있으며, 코드의 유지보수성도 높아지게 됩니다.
+### SOLID 원칙과 입력(Input) & 상태(State) 기획서
+ 1.	SRP(단일 책임 원칙)
+    - 각 부서가 Input/State 구조에 맞춰 자신만의 책임에 집중할 수 있습니다.
+ 5.	OCP(개방 폐쇄 원칙)
+    - 기능 추가·제거 시에도 기존 기획서를 크게 수정하지 않고 확장·추가가 가능합니다.
+ 6.	LSP(리스코프 치환 원칙)
+    - 기존 ViewModel을 유지하면서도 하위 타입으로 확장하거나 교체하기 쉽습니다.
+ 7.	ISP(인터페이스 분리 원칙)
+    - 기획팀, 디자인팀, 개발팀, QA팀이 필요로 하는 인터페이스에만 집중할 수 있습니다.
+ 9.	DIP(의존성 역전 원칙)
+    - ViewModel은 추상화된 Input/State 구조에 의존하므로, UI나 구체적인 라이브러리에 종속되지 않습니다.
 
 
 ### 결론
 
-이로써 기존 코드의 재사용성을 높이고, 각 부서가 명확한 역할 분담을 통해 협력할 수 있으며, 새로운 기능을 더 쉽게 개발할 수 있게 되었습니다.
+UIFusionKit은 기존 코드 재사용성을 높이고, 기획·디자인·개발·QA 각 부서가 명확한 역할 분담을 통해 협력할 수 있도록 돕습니다. 
+또한 MVVM + Clean Architecture를 결합해 TDD를 가능케 하고, 공통 ‘Input/State 기획서’를 기반으로 빠르고 정확하게 요구사항을 구현할 수 있습니다. 
+결과적으로, 프로젝트 전반의 효율과 생산성을 한층 끌어올렸습니다.
 
 
