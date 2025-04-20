@@ -6,70 +6,81 @@
 //
 
 import SwiftUI
-import Combine
 
 struct CounterView: View {
-    var viewModel: any CounterViewModel
-    @ObservedObject private var state: CounterState
-    @State private var isPresented = false
-    private var cancellables = Set<AnyCancellable>()
+    @StateObject private var viewModel: CounterAsyncViewModel
     
-    init(_ viewModel: any CounterViewModel) {
-        self.viewModel = viewModel
-        self.state = viewModel.state
+    init(_ viewModel: CounterAsyncViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
+    
     var body: some View {
         VStack(spacing: 20) {
-            Text("Value: \(state.value)")
+            Text("Value: \(viewModel.value)")
                 .font(.system(size: 20, weight: .semibold))
             
-            Button(action: {
+            Text("허용 범위: -10 ~ 10")
+                .font(.caption)
+                .foregroundColor(.gray)
+            
+            ButtonView(title: "Increase", icon: "plus", backgroundColor: .gray.opacity(0.2)) {
                 viewModel.send(.increase)
-            }) {
-                Label("Increase", systemImage: "plus")
-                    .padding(8)
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
             }
             
-            Button(action: {
+            ButtonView(title: "Decrease", icon: "minus", backgroundColor: .gray.opacity(0.2)) {
                 viewModel.send(.decrease)
-            }) {
-                Label("Decrease", systemImage: "minus")
-                    .padding(8)
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
             }
             
-            Button(action: {
+            ButtonView(title: "Reset", icon: "arrow.counterclockwise.circle", backgroundColor: .orange.opacity(0.2)) {
                 viewModel.send(.reset)
-            }) {
-                Label("Reset", systemImage: "arrow.counterclockwise.circle")
-                    .padding(8)
-                    .background(Color.orange.opacity(0.2))
-                    .cornerRadius(8)
             }
             
-            Button(action: {
+            ButtonView(title: "Show", icon: "exclamationmark.circle.fill", backgroundColor: .yellow.opacity(0.2)) {
                 viewModel.send(.show)
-            }) {
-                Label("Show", systemImage: "exclamationmark.circle.fill")
-                    .padding(8)
-                    .background(Color.yellow.opacity(0.2))
-                    .cornerRadius(8)
             }
         }
-        .alert(isPresented: $isPresented) {
-            Alert(title: Text("알림"), message: Text("\(state.value)"), dismissButton: .default(Text("닫기"), action: {
-                isPresented = false
-            }))
+        .alert(item: $viewModel.activeAlert) { alertType in
+            switch alertType {
+            case .info:
+                return Alert(
+                    title: Text("알림"), 
+                    message: Text("\(viewModel.value)"), 
+                    dismissButton: .default(Text("닫기")) {
+                        viewModel.send(.dismissAlert)
+                    }
+                )
+            case .error(let error):
+                return Alert(
+                    title: Text("오류"),
+                    message: Text(error.localizedDescription),
+                    dismissButton: .default(Text("확인")) {
+                        viewModel.send(.dismissAlert)
+                    }
+                )
+            case .none:
+                // 이 케이스는 발생하지 않음
+                return Alert(title: Text(""))
+            }
         }
-        .onReceive(state.$showAlert.dropFirst(), perform: { _ in
-            isPresented = true
-        })
+    }
+}
+
+struct ButtonView: View {
+    let title: String
+    let icon: String
+    let backgroundColor: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Label(title, systemImage: icon)
+                .padding(8)
+                .background(backgroundColor)
+                .cornerRadius(8)
+        }
     }
 }
 
 #Preview {
-    CounterView(DefaultCounterViewModel())
+    CounterView(CounterAsyncViewModel())
 }
