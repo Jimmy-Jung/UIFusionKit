@@ -513,7 +513,8 @@ final class CounterViewController: UIViewController {
 
 ## 입력에 따른 flow 예시
 
-<img width="331" alt="예시화면" src="https://github.com/user-attachments/assets/f08a878a-c23c-40fc-b8f9-42cdc25b9373">
+
+https://github.com/user-attachments/assets/b87f2b9c-c782-4104-b333-802600af8f1d
 
 예시 화면: Increase, Decrease, Reset, Show 버튼
 
