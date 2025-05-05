@@ -26,7 +26,8 @@ struct CounterView: View {
             ButtonView(
                 title: "Increase",
                 icon: "plus",
-                backgroundColor: .gray.opacity(0.2)
+                backgroundColor: .gray.opacity(0.2),
+                isLoading: viewModel.loadingState == .increasing
             ) {
                 viewModel.send(.increase)
             }
@@ -34,7 +35,8 @@ struct CounterView: View {
             ButtonView(
                 title: "Decrease",
                 icon: "minus",
-                backgroundColor: .gray.opacity(0.2)
+                backgroundColor: .gray.opacity(0.2),
+                isLoading: viewModel.loadingState == .decreasing
             ) {
                 viewModel.send(.decrease)
             }
@@ -42,7 +44,8 @@ struct CounterView: View {
             ButtonView(
                 title: "Reset",
                 icon: "arrow.counterclockwise.circle",
-                backgroundColor: .orange.opacity(0.2)
+                backgroundColor: .orange.opacity(0.2),
+                isLoading: false
             ) {
                 viewModel.send(.reset)
             }
@@ -50,7 +53,8 @@ struct CounterView: View {
             ButtonView(
                 title: "Show",
                 icon: "exclamationmark.circle.fill",
-                backgroundColor: .yellow.opacity(0.2)
+                backgroundColor: .yellow.opacity(0.2),
+                isLoading: false
             ) {
                 viewModel.send(.show)
             }
@@ -85,15 +89,26 @@ struct ButtonView: View {
     let title: String
     let icon: String
     let backgroundColor: Color
+    let isLoading: Bool
     let action: () -> Void
     
     var body: some View {
         Button(action: action) {
-            Label(title, systemImage: icon)
-                .padding(8)
-                .background(backgroundColor)
-                .cornerRadius(8)
+            Label {
+                Text(title)
+            } icon: {
+                if isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                } else {
+                    Image(systemName: icon)
+                }
+            }
+            .padding(8)
+            .background(backgroundColor)
+            .cornerRadius(8)
         }
+        .disabled(isLoading)
     }
 }
 

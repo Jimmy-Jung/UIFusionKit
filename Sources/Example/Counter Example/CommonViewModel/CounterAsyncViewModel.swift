@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 // 카운터 앱에서 발생할 수 있는 에러 정의
 enum CounterError: Error, LocalizedError {
@@ -39,6 +40,13 @@ final class CounterAsyncViewModel: AsyncViewModel {
         }
     }
     
+    // 버튼 로딩 상태를 추적하기 위한 enum
+    enum LoadingState {
+        case none
+        case increasing
+        case decreasing
+    }
+    
     enum Input {
         case increase
         case decrease
@@ -58,6 +66,7 @@ final class CounterAsyncViewModel: AsyncViewModel {
     // 속성 정의
     @Published var value: Int = 0
     @Published var activeAlert: AlertType?
+    @Published var loadingState: LoadingState = .none
     
     // 값의 허용 범위
     private let minValue = -10
@@ -96,20 +105,40 @@ final class CounterAsyncViewModel: AsyncViewModel {
     }
     // 값을 증가시키는 메서드
     private func increaseValue() async throws {
+        // 로딩 상태 설정
+        loadingState = .increasing
+        
+        // 0.5초 딜레이
+        try await Task.sleep(nanoseconds: 500_000_000)
+        
         let newValue = value + 1
         if newValue > maxValue {
+            loadingState = .none
             throw CounterError.valueOutOfRange(current: newValue, min: minValue, max: maxValue)
         }
         value = newValue
+        
+        // 로딩 상태 초기화
+        loadingState = .none
     }
     
     // 값을 감소시키는 메서드
     private func decreaseValue() async throws {
+        // 로딩 상태 설정
+        loadingState = .decreasing
+        
+        // 0.5초 딜레이
+        try await Task.sleep(nanoseconds: 500_000_000)
+        
         let newValue = value - 1
         if newValue < minValue {
+            loadingState = .none
             throw CounterError.valueOutOfRange(current: newValue, min: minValue, max: maxValue)
         }
         value = newValue
+        
+        // 로딩 상태 초기화
+        loadingState = .none
     }
     
     // 값을 리셋하는 메서드
@@ -123,6 +152,7 @@ final class CounterAsyncViewModel: AsyncViewModel {
     }
     
     func handleError(_ error: Error) async {
+        loadingState = .none
         activeAlert = .error(error)
         print("카운터 오류: \(error.localizedDescription)")
     }

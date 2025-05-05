@@ -90,6 +90,30 @@ final class CounterViewController: UIViewController {
                 }
             }
             .store(in: &cancellables)
+        
+        // 로딩 상태 바인딩
+        viewModel.$loadingState
+            .sink { [weak self] state in
+                guard let self = self else { return }
+                
+                switch state {
+                case .increasing:
+                    self.increaseButton.configuration?.showsActivityIndicator = true
+                    self.increaseButton.isEnabled = false
+                    
+                case .decreasing:
+                    self.decreaseButton.configuration?.showsActivityIndicator = true
+                    self.decreaseButton.isEnabled = false
+                    
+                case .none:
+                    self.increaseButton.configuration?.showsActivityIndicator = false
+                    self.increaseButton.isEnabled = true
+                    
+                    self.decreaseButton.configuration?.showsActivityIndicator = false
+                    self.decreaseButton.isEnabled = true
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private func showInfoAlert(_ message: String) {
