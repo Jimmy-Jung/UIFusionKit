@@ -23,19 +23,35 @@ struct CounterView: View {
                 .font(.caption)
                 .foregroundColor(.gray)
             
-            ButtonView(title: "Increase", icon: "plus", backgroundColor: .gray.opacity(0.2)) {
+            ButtonView(
+                title: "Increase",
+                icon: "plus",
+                backgroundColor: .gray.opacity(0.2)
+            ) {
                 viewModel.send(.increase)
             }
             
-            ButtonView(title: "Decrease", icon: "minus", backgroundColor: .gray.opacity(0.2)) {
+            ButtonView(
+                title: "Decrease",
+                icon: "minus",
+                backgroundColor: .gray.opacity(0.2)
+            ) {
                 viewModel.send(.decrease)
             }
             
-            ButtonView(title: "Reset", icon: "arrow.counterclockwise.circle", backgroundColor: .orange.opacity(0.2)) {
+            ButtonView(
+                title: "Reset",
+                icon: "arrow.counterclockwise.circle",
+                backgroundColor: .orange.opacity(0.2)
+            ) {
                 viewModel.send(.reset)
             }
             
-            ButtonView(title: "Show", icon: "exclamationmark.circle.fill", backgroundColor: .yellow.opacity(0.2)) {
+            ButtonView(
+                title: "Show",
+                icon: "exclamationmark.circle.fill",
+                backgroundColor: .yellow.opacity(0.2)
+            ) {
                 viewModel.send(.show)
             }
         }
@@ -81,6 +97,7 @@ struct ButtonView: View {
     }
 }
 
+@available(iOS 17.0, *)
 #Preview {
     CounterView(CounterAsyncViewModel())
 }

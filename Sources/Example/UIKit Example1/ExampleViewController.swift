@@ -11,9 +11,10 @@ import CombineCocoa
 
 final class ExampleViewController: UIViewController {
     
-    private var viewModel: any ExampleViewModel
+    private var viewModel: ExampleViewModel
     private var cancellables = Set<AnyCancellable>()
-    init(_ viewModel: any ExampleViewModel) {
+    
+    init(_ viewModel: ExampleViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -57,15 +58,12 @@ final class ExampleViewController: UIViewController {
     }
     
     private func bindState() {
-        
         viewModel
-            .state
             .$buttonText
             .bind(on: textButton, to: \.title)
             .store(in: &cancellables)
         
         viewModel
-            .state
             .$buttonColor
             .sink(with: self) { owner, backgroundColor in
                 owner.textButton.baseBackgroundColor(backgroundColor)
@@ -73,7 +71,6 @@ final class ExampleViewController: UIViewController {
             .store(in: &cancellables)
         
         viewModel
-            .state
             .$buttonFrame
             .sink(with: self) { owner, frame in
                 owner.textButton.snp.remakeConstraints { make in
@@ -87,10 +84,28 @@ final class ExampleViewController: UIViewController {
             .store(in: &cancellables)
         
         viewModel
-            .state
             .$labelText
             .assign(to: \.text, on: textLabel)
             .store(in: &cancellables)
+            
+        // 오류 처리를 위한 바인딩
+        viewModel
+            .$activeAlert
+            .sink(with: self) { owner, alertType in
+                guard let alertType = alertType, case .error(let error) = alertType else { return }
+                owner.showErrorAlert(error)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func showErrorAlert(_ error: Error) {
+        let alert = UIAlertController(
+            title: "오류",
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
     }
     
     @available(*, unavailable)
@@ -101,5 +116,5 @@ final class ExampleViewController: UIViewController {
 
 @available(iOS 17.0, *)
 #Preview {
-    ExampleViewController(DefaultExampleViewModel())
+    ExampleViewController(ExampleViewModel())
 }

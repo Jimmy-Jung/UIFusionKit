@@ -9,14 +9,15 @@ import UIKit
 import Combine
 
 final class CounterViewController: UIViewController {
-    private var viewModel: any CounterViewModel
+    private let viewModel: CounterAsyncViewModel
     private var cancellables = Set<AnyCancellable>()
     
-    init(_ viewModel: any CounterViewModel) {
+    init(_ viewModel: CounterAsyncViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     private let valueLabel = UILabel()
+    private let rangeLabel = UILabel()
     private let increaseButton = UIButton(configuration: .gray())
     private let decreaseButton = UIButton(configuration: .gray())
     private let resetButton = UIButton(configuration: .plain())
@@ -30,11 +31,17 @@ final class CounterViewController: UIViewController {
     }
     
     private func setupUI() {
+        
         view.body {
             VStackView(spacing: 20) {
                 valueLabel
                     .font(.systemFont(ofSize: 20, weight: .semibold))
-                    .text("Value")
+                    .text("Value: 0")
+                
+                rangeLabel
+                    .text("허용 범위: -10 ~ 10")
+                    .font(.systemFont(ofSize: 12))
+                    .textColor(.systemGray)
                 
                 increaseButton
                     .image(.add)
@@ -63,49 +70,56 @@ final class CounterViewController: UIViewController {
     }
     
     private func bindState() {
-        viewModel
-            .state
-            .$value
-            .dropFirst()
-            .map { "\($0)"}
+        viewModel.$value
+            .map { "Value: \($0)" }
             .assign(to: \.text, on: valueLabel)
             .store(in: &cancellables)
         
-        viewModel
-            .state
-            .$showAlert
-            .sink(with: self) { owner, _ in
-                let alert = UIAlertController(title: "알림", message: "\(owner.viewModel.state.value)", preferredStyle: .alert)
-                alert.addAction(.init(title: "닫기", style: .cancel))
-                owner.present(alert, animated: true)
+        viewModel.$activeAlert
+            .compactMap { $0 }
+            .sink { [weak self] alertType in
+                guard let self = self else { return }
+                
+                switch alertType {
+                case .info:
+                    self.showInfoAlert(self.viewModel.value.description)
+                case .error(let error):
+                    self.showErrorAlert(error)
+                case .none:
+                    break
+                }
             }
             .store(in: &cancellables)
     }
     
+    private func showInfoAlert(_ message: String) {
+        let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
+        alert.addAction(.init(title: "닫기", style: .cancel))
+        present(alert, animated: true)
+    }
+    
+    private func showErrorAlert(_ error: Error) {
+        let alert = UIAlertController(title: "오류", message: error.localizedDescription, preferredStyle: .alert)
+        alert.addAction(.init(title: "확인", style: .default))
+        present(alert, animated: true)
+    }
+    
     private func bindInput() {
-        increaseButton
-            .publisher(for: \.tapPublisher)
-            .sink(with: self) { owner, output in
-                owner.viewModel.send(.increase)
-            }
-            .store(in: &cancellables)
+        increaseButton.addAction(self) { owner in
+            owner.viewModel.send(.increase)
+        }
         
-        increaseButton
-            .addAction(self) { owner in
-                owner.viewModel.send(.increase)
-            }
-        decreaseButton
-            .addAction(self) { owner in
-                owner.viewModel.send(.decrease)
-            }
-        resetButton
-            .addAction(self) { owner in
-                owner.viewModel.send(.reset)
-            }
-        showButton
-            .addAction(self) { owner in
-                owner.viewModel.send(.show)
-            }
+        decreaseButton.addAction(self) { owner in
+            owner.viewModel.send(.decrease)
+        }
+        
+        resetButton.addAction(self) { owner in
+            owner.viewModel.send(.reset)
+        }
+        
+        showButton.addAction(self) { owner in
+            owner.viewModel.send(.show)
+        }
     }
     
     @available(*, unavailable)
@@ -116,5 +130,5 @@ final class CounterViewController: UIViewController {
 
 @available(iOS 17.0, *)
 #Preview {
-    CounterViewController(DefaultCounterViewModel())
+    CounterViewController(CounterAsyncViewModel())
 }

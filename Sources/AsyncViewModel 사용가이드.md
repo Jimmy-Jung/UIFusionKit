@@ -54,7 +54,7 @@ enum Action {
 입력(Input)을 액션(Action)으로 변환하는 메서드입니다.
 
 ```swift
-nonisolated func transform(_ input: Input) async throws -> [Action] {
+func transform(_ input: Input) async throws -> [Action] {
     switch input {
     case .loadData:
         return [.fetchData]
@@ -129,7 +129,7 @@ final class CounterAsyncViewModel: AsyncViewModel {
     init() { }
     
     // Input을 Action으로 변환
-    nonisolated func transform(_ input: Input) async throws -> [Action] {
+    func transform(_ input: Input) async throws -> [Action] {
         switch input {
             case .increase: return [.increaseValue]
             case .decrease: return [.decreaseValue]

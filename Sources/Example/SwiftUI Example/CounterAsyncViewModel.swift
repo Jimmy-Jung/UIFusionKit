@@ -63,9 +63,9 @@ final class CounterAsyncViewModel: AsyncViewModel {
     private let minValue = -10
     private let maxValue = 10
     
-    init() { }
+    init() {}
     
-    nonisolated func transform(_ input: Input) async -> [Action] {
+    func transform(_ input: Input) async -> [Action] {
         switch input {
             case .increase: return [.increaseValue]
             case .decrease: return [.decreaseValue]
@@ -86,10 +86,14 @@ final class CounterAsyncViewModel: AsyncViewModel {
             case .showAlert:
                 try await showAlert()
             case .dismissAlert:
-                activeAlert = nil
+                dismissAlert()
+                
         }
     }
     
+    private func dismissAlert() {
+        activeAlert = nil
+    }
     // 값을 증가시키는 메서드
     private func increaseValue() async throws {
         let newValue = value + 1
