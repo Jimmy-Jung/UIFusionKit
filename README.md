@@ -148,7 +148,7 @@ SwiftUI와 UIKit 모두에서 동일하게 사용할 수 있는 ViewModel 패턴
 
 ## AsyncViewModel의 State Data Flow
 
-<img width="631" alt="ViewModelFlow" src="https://github.com/user-attachments/assets/6affddb7-bd58-4b6f-b203-f201336cad17">
+![example demo](https://github.com/user-attachments/assets/09aec870-7661-4f5f-8155-77d0c4d1e46d)
 
 ReactorKit과 TCA의 단방향 플로우, 상태 기반 흐름과 유사하지만, 특정 라이브러리나 특정 프레임워크에 종속적이지 않도록 구현한 점이 핵심입니다. 또한 async/await을 활용한 현대적인 비동기 패턴을 적용하여 비동기 작업을 효율적으로 처리합니다.
 
