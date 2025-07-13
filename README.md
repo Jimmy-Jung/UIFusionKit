@@ -154,6 +154,62 @@ ReactorKit과 TCA의 단방향 플로우, 상태 기반 흐름과 유사하지�
 
 ## AsyncViewModel 구현 예시
 
+### 카운터 예제
+다음은 카운터 앱을 구현한 AsyncViewModel 예시입니다:
+
+### 계산기 예제 (클린 아키텍처 적용)
+UIFusionKit에는 AsyncViewModel 패턴과 클린 아키텍처를 활용한 계산기 예제가 포함되어 있습니다. 이 예제는 기본 사칙연산(+, -, ×, ÷)과 오류 처리를 구현하여 실제 앱에서 사용할 수 있는 수준의 계산기 기능을 제공하며, Domain-Driven Design 원칙을 따릅니다.
+
+```swift
+final class CalculatorAsyncViewModel: AsyncViewModel {
+    enum Input {
+        case number(Int)
+        case operation(Operation)
+        case equals
+        case clear
+        case dismissAlert
+    }
+
+    enum Action {
+        case inputNumber(Int)
+        case setOperation(Operation)
+        case calculate
+        case clearAll
+        case dismissAlert
+    }
+    
+    @Published var display: String = "0"
+    @Published var activeAlert: AlertType?
+    
+    // 비즈니스 로직 구현
+    func transform(_ input: Input) async -> [Action] {
+        switch input {
+        case .number(let digit): return [.inputNumber(digit)]
+        case .operation(let op): return [.setOperation(op)]
+        case .equals: return [.calculate]
+        case .clear: return [.clearAll]
+        case .dismissAlert: return [.dismissAlert]
+        }
+    }
+    
+    func perform(_ action: Action) async throws {
+        switch action {
+        case .inputNumber(let digit):
+            try await inputNumber(digit)
+        case .calculate:
+            try await calculate()
+        // ... 기타 액션 처리
+        }
+    }
+}
+```
+
+계산기 예제의 주요 특징:
+- **0으로 나누기 오류 처리**: 수학적으로 불가능한 연산에 대한 적절한 오류 메시지 표시
+- **오버플로우 처리**: 계산 결과가 표시 가능한 범위를 벗어날 때의 처리
+- **연속 연산 지원**: 여러 연산을 연속으로 수행할 수 있는 기능
+- **직관적인 UI**: 실제 계산기와 유사한 버튼 배치와 동작
+
 다음은 카운터 앱을 구현한 AsyncViewModel 예시입니다:
 
 ```swift

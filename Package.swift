@@ -30,11 +30,17 @@ let package = Package(
                 "Starscream",
                 "FlexLayout",
                 "PinLayout"
-            ]
+            ],
+            path: "Sources"
         ),
         .testTarget(
             name: "UIFusionKitTests",
             dependencies: ["UIFusionKit"]
+        ),
+        .testTarget(
+            name: "CalculatorDomainTests",
+            dependencies: ["UIFusionKit"],
+            path: "Tests/CalculatorDomainTests"
         ),
     ]
 )

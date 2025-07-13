@@ -15,50 +15,24 @@ struct CounterView: View {
     }
     
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Value: \(viewModel.value)")
-                .font(.system(size: 20, weight: .semibold))
+        VStack(spacing: .DS.sectionSpacing) {
+            CounterDisplayView(
+                value: viewModel.value,
+                description: "허용 범위: -10 ~ 10"
+            )
             
-            Text("허용 범위: -10 ~ 10")
-                .font(.caption)
-                .foregroundColor(.gray)
-            
-            ButtonView(
-                title: "Increase",
-                icon: "plus",
-                backgroundColor: .gray.opacity(0.2),
-                isLoading: viewModel.loadingState == .increasing
-            ) {
-                viewModel.send(.increase)
-            }
-            
-            ButtonView(
-                title: "Decrease",
-                icon: "minus",
-                backgroundColor: .gray.opacity(0.2),
-                isLoading: viewModel.loadingState == .decreasing
-            ) {
-                viewModel.send(.decrease)
-            }
-            
-            ButtonView(
-                title: "Reset",
-                icon: "arrow.counterclockwise.circle",
-                backgroundColor: .orange.opacity(0.2),
-                isLoading: false
-            ) {
-                viewModel.send(.reset)
-            }
-            
-            ButtonView(
-                title: "Show",
-                icon: "exclamationmark.circle.fill",
-                backgroundColor: .yellow.opacity(0.2),
-                isLoading: false
-            ) {
-                viewModel.send(.show)
-            }
+            CounterActionsView(
+                isIncreaseLoading: viewModel.loadingState == .increasing,
+                isDecreaseLoading: viewModel.loadingState == .decreasing,
+                onIncrease: { viewModel.send(.increase) },
+                onDecrease: { viewModel.send(.decrease) },
+                onReset: { viewModel.send(.reset) },
+                onShow: { viewModel.send(.show) }
+            )
         }
+        .padding(.DS.lg)
+        .background(Color.DS.background)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .alert(item: $viewModel.activeAlert) { alertType in
             switch alertType {
             case .info:
@@ -85,32 +59,7 @@ struct CounterView: View {
     }
 }
 
-struct ButtonView: View {
-    let title: String
-    let icon: String
-    let backgroundColor: Color
-    let isLoading: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            Label {
-                Text(title)
-            } icon: {
-                if isLoading {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                } else {
-                    Image(systemName: icon)
-                }
-            }
-            .padding(8)
-            .background(backgroundColor)
-            .cornerRadius(8)
-        }
-        .disabled(isLoading)
-    }
-}
+// 기존 ButtonView는 새로운 ActionButton 컴포넌트로 대체되었습니다.
 
 @available(iOS 17.0, *)
 #Preview {
