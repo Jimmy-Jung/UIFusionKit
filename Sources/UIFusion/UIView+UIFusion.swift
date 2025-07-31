@@ -266,5 +266,11 @@ public extension UIFusion where Self: UIView {
         self.tag = value
         return self
     }
+    
+    @discardableResult
+    func accessibilityIdentifier(_ identifier: String) -> Self {
+        self.accessibilityIdentifier = identifier
+        return self
+    }
 }
 
