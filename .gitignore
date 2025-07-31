@@ -48,6 +48,8 @@ playground.xcworkspace
 .build/
 .swiftpm/
 Package.resolved
+*.xcuserstate
+*.xcuserdatad/
 
 # CocoaPods
 #

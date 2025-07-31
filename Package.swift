@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "UIFusionKit",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v17),
     ],
     products: [
         .library(
@@ -19,6 +19,9 @@ let package = Package(
         .package(url: "https://github.com/daltoniam/Starscream.git", from: "4.0.6"),
         .package(url: "https://github.com/layoutBox/FlexLayout.git", .upToNextMajor(from: "2.2.0")),
         .package(url: "https://github.com/layoutBox/PinLayout.git", .upToNextMajor(from: "1.10.5")),
+        .package(url: "https://github.com/ReactorKit/ReactorKit.git", .upToNextMajor(from: .init(3, 2, 0))),
+        .package(url: "https://github.com/ReactiveX/RxSwift.git", .upToNextMajor(from: .init(6, 6, 0))),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", .upToNextMajor(from: .init(1, 21, 0))),
     ],
     targets: [
         .target(
@@ -29,7 +32,10 @@ let package = Package(
                 "CombineCocoa",
                 "Starscream",
                 "FlexLayout",
-                "PinLayout"
+                "PinLayout",
+                "ReactorKit",
+                .product(name: "RxCocoa", package: "RxSwift"),
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             path: "Sources"
         ),
