@@ -18,8 +18,8 @@ struct CalculatorView: View {
         VStack(spacing: .DS.lg) {
             // 디스플레이 영역
             CalculatorDisplayView(
-                display: viewModel.display,
-                isAutoClearActive: viewModel.isAutoClearTimerActive
+                display: viewModel.state.display,
+                isAutoClearActive: viewModel.state.isAutoClearTimerActive
             )
             
             // 버튼 그리드
@@ -41,7 +41,7 @@ struct CalculatorView: View {
         .padding(.DS.lg)
         .background(Color.DS.background)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .alert(item: $viewModel.activeAlert) { alertType in
+        .alert(item: $viewModel.state.activeAlert) { alertType in
             switch alertType {
             case .error(let error):
                 return Alert(
