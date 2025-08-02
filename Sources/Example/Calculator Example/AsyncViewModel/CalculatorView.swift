@@ -17,7 +17,10 @@ struct CalculatorView: View {
     var body: some View {
         VStack(spacing: .DS.lg) {
             // 디스플레이 영역
-            CalculatorDisplayView(display: viewModel.display)
+            CalculatorDisplayView(
+                display: viewModel.display,
+                isAutoClearActive: viewModel.isAutoClearTimerActive
+            )
             
             // 버튼 그리드
             CalculatorButtonsView(
@@ -56,9 +59,24 @@ struct CalculatorView: View {
 // 계산기 디스플레이 컴포넌트
 struct CalculatorDisplayView: View {
     let display: String
+    let isAutoClearActive: Bool
     
     var body: some View {
         VStack {
+            // 자동 클리어 타이머 상태 표시
+            if isAutoClearActive {
+                HStack {
+                    Image(systemName: "timer")
+                        .foregroundColor(.orange)
+                    Text("5초 후 자동 클리어됩니다")
+                        .font(.caption)
+                        .foregroundColor(.orange)
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.top, 8)
+            }
+            
             Spacer()
             
             HStack {
@@ -71,12 +89,18 @@ struct CalculatorDisplayView: View {
                     .accessibilityIdentifier("calculator_display")
             }
         }
-        .frame(height: 120)
+        .frame(height: isAutoClearActive ? 140 : 120)
         .padding(.horizontal, .DS.lg)
         .background(
             RoundedRectangle(cornerRadius: .DS.buttonRadius)
                 .fill(Color.DS.surface)
+                .overlay(
+                    // 자동 클리어 활성화 시 테두리 효과
+                    RoundedRectangle(cornerRadius: .DS.buttonRadius)
+                        .stroke(isAutoClearActive ? Color.orange.opacity(0.6) : Color.clear, lineWidth: 2)
+                )
         )
+        .animation(.easeInOut(duration: 0.3), value: isAutoClearActive)
     }
 }
 

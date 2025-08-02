@@ -40,10 +40,12 @@ final class CalculatorAsyncViewModel: AsyncViewModel {
     // MARK: - Published Properties
     @Published var display: String = "0"
     @Published var activeAlert: AlertType?
-    
+    @Published var isAutoClearTimerActive: Bool = false
+
     // MARK: - Private Properties
     private var calculatorState: CalculatorState = .initial
     private let calculatorUseCase: CalculatorUseCaseProtocol
+    private var autoClearTask: Task<Void, Never>?
     
     // MARK: - Initialization
     init(calculatorUseCase: CalculatorUseCaseProtocol = CalculatorUseCase()) {
@@ -98,12 +100,14 @@ final class CalculatorAsyncViewModel: AsyncViewModel {
     
     // 숫자 입력 처리
     private func inputNumber(_ digit: Int) async throws {
+        cancelAutoClearTimer()
         calculatorState = try calculatorUseCase.inputNumber(digit, currentState: calculatorState)
         updateDisplayFromState()
     }
     
     // 연산자 설정
     private func setOperation(_ operation: CalculatorOperation) async throws {
+        cancelAutoClearTimer()
         calculatorState = try calculatorUseCase.setOperation(operation, currentState: calculatorState)
         updateDisplayFromState()
     }
@@ -112,10 +116,12 @@ final class CalculatorAsyncViewModel: AsyncViewModel {
     private func calculate() async throws {
         calculatorState = try calculatorUseCase.calculate(currentState: calculatorState)
         updateDisplayFromState()
+        startAutoClearTimer()
     }
     
     // 모든 값 초기화
     private func clearAll() async throws {
+        cancelAutoClearTimer()
         calculatorState = calculatorUseCase.clear()
         updateDisplayFromState()
     }
@@ -124,4 +130,33 @@ final class CalculatorAsyncViewModel: AsyncViewModel {
     private func updateDisplayFromState() {
         display = calculatorState.display
     }
-} 
+
+    private func startAutoClearTimer() {
+        cancelAutoClearTimer() // 기존 타이머가 있으면 취소
+        
+        isAutoClearTimerActive = true
+        autoClearTask = Task {
+            do {
+                try await Task.sleep(for: .seconds(5))
+                if !Task.isCancelled {
+                    await MainActor.run {
+                        self.isAutoClearTimerActive = false
+                        self.calculatorState = self.calculatorUseCase.clear()
+                        self.updateDisplayFromState()
+                    }
+                }
+            } catch {
+                // Task.sleep에서 취소될 때 에러가 발생하므로 여기서 처리
+                print("Auto-clear timer cancelled.")
+            }
+        }
+    }
+
+    private func cancelAutoClearTimer() {
+        autoClearTask?.cancel()
+        autoClearTask = nil
+        if isAutoClearTimerActive {
+            isAutoClearTimerActive = false
+        }
+    }
+}
