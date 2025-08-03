@@ -81,7 +81,6 @@ extension CalculatorAsyncViewModel {
 }
 
 // MARK: - Improved CalculatorAsyncViewModel
-
 final class CalculatorAsyncViewModel: AsyncViewModel {
 
     // MARK: - Properties
