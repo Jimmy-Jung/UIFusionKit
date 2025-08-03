@@ -34,6 +34,9 @@ public protocol AsyncViewModel: ObservableObject {
     
     /// 순수 함수로 상태를 변경하고 부수 효과를 반환합니다.
     func reduce(state: inout State, action: Action) -> [AsyncEffect<Action>]
+    
+    /// 에러 처리를 위한 메서드
+    func handleError(_ error: Error)
 }
 
 // MARK: - Improved AsyncEffect
@@ -190,7 +193,7 @@ public extension AsyncViewModel {
         }
     }
     
-    /// 에러 처리를 위한 기본 구현 (필요시 오버라이드)
+    /// 에러 처리를 위한 기본 구현
     func handleError(_ error: Error) {
         print("AsyncViewModel error: \(error.localizedDescription)")
     }
@@ -204,8 +207,8 @@ public extension AsyncEffect {
         return .merge(effects)
     }
     
-    /// 비동기 작업을 실행하는 편의 메서드
-    static func run(
+    /// 단일 액션을 반환하는 비동기 작업을 실행하는 편의 메서드
+    static func runAction(
         id: AnyHashable? = nil,
         operation: @escaping @Sendable () async throws -> Action
     ) -> AsyncEffect<Action> {
@@ -220,7 +223,7 @@ public extension AsyncEffect {
     }
     
     /// 여러 액션을 반환하는 비동기 작업을 실행하는 편의 메서드
-    static func run(
+    static func runActions(
         id: AnyHashable? = nil,
         operation: @escaping @Sendable () async throws -> [Action]
     ) -> AsyncEffect<Action> {
@@ -240,22 +243,22 @@ public extension AsyncEffect {
 /// 테스트를 위한 AsyncViewModel 스토어
 @MainActor
 public class AsyncTestStore<ViewModel: AsyncViewModel> {
-    private var viewModel: ViewModel
+    public let viewModel: ViewModel
     private var receivedActions: [ViewModel.Action] = []
-    private var receivedStates: [ViewModel.State] = []
     
-    public init(
-        initialState: ViewModel.State
-    ) where ViewModel: AnyObject {
-        // 실제 ViewModel을 생성하기 위해서는 구체적인 구현이 필요합니다.
-        // 이는 예시이며, 실제로는 각 ViewModel이 TestStore를 지원하도록 구현해야 합니다.
-        fatalError("TestStore는 각 ViewModel별로 구체적인 구현이 필요합니다.")
+    public init(viewModel: ViewModel) {
+        self.viewModel = viewModel
     }
     
-    /// 액션을 보내고 상태 변경을 검증합니다.
+    /// 액션을 ViewModel에 직접 전달합니다.
     public func perform(_ action: ViewModel.Action) {
         receivedActions.append(action)
-        // 실제 구현에서는 reducer를 직접 호출하고 상태 변경을 추적합니다.
+        viewModel.perform(action)
+    }
+    
+    /// 입력을 ViewModel에 직접 전달합니다.
+    public func send(_ input: ViewModel.Input) {
+        viewModel.send(input)
     }
     
     /// 현재 상태를 반환합니다.
@@ -263,14 +266,9 @@ public class AsyncTestStore<ViewModel: AsyncViewModel> {
         viewModel.state
     }
     
-    /// 받은 액션들을 반환합니다.
+    /// 직접 perform을 통해 전달된 액션들을 반환합니다.
     public var actions: [ViewModel.Action] {
         receivedActions
-    }
-    
-    /// 상태 변경 히스토리를 반환합니다.
-    public var states: [ViewModel.State] {
-        receivedStates
     }
     
     /// 특정 상태가 되기를 기다립니다.

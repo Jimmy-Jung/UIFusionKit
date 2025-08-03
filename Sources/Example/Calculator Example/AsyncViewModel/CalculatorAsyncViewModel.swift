@@ -130,7 +130,7 @@ final class CalculatorAsyncViewModel: AsyncViewModel {
             return [
                 .cancel(id: CancelID.autoClearTimer),
                 .action(.setTimerActive(false)),
-                .run(operation: { [calculatorUseCase] in
+                .runAction(operation: { [calculatorUseCase] in
                     do {
                         let newState = try calculatorUseCase.inputNumber(
                             digit,
@@ -147,7 +147,7 @@ final class CalculatorAsyncViewModel: AsyncViewModel {
             return [
                 .cancel(id: CancelID.autoClearTimer),
                 .action(.setTimerActive(false)),
-                .run(operation: { [calculatorUseCase, currentCalculatorState = state.calculatorState] in
+                .runAction(operation: { [calculatorUseCase, currentCalculatorState = state.calculatorState] in
                     do {
                         let newState = try calculatorUseCase.setOperation(
                             operation,
@@ -163,7 +163,7 @@ final class CalculatorAsyncViewModel: AsyncViewModel {
         case .calculate:
             return [
                 .action(.setTimerActive(true)),
-                .run(operation: { [calculatorUseCase, currentCalculatorState = state.calculatorState] in
+                .runAction(operation: { [calculatorUseCase, currentCalculatorState = state.calculatorState] in
                     do {
                         let newState = try calculatorUseCase.calculate(
                             currentState: currentCalculatorState
@@ -173,7 +173,7 @@ final class CalculatorAsyncViewModel: AsyncViewModel {
                         return .errorOccurred(error)
                     }
                 }),
-                .run(
+                .runAction(
                     id: CancelID.autoClearTimer,
                     operation: {
                         try await Task.sleep(for: .seconds(5))
@@ -222,5 +222,9 @@ final class CalculatorAsyncViewModel: AsyncViewModel {
             state.display = newDisplay
             return [.none]
         }
+    }
+    
+    func handleError(_ error: Error) {
+        perform(.errorOccurred(error))
     }
 }

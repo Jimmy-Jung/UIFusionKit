@@ -43,7 +43,7 @@ public final class CalculatorUseCase: CalculatorUseCaseProtocol {
                     newDisplay = currentState.display
                 }
             }
-            newShouldResetDisplay = currentState.shouldResetDisplay
+            newShouldResetDisplay = false
         }
         
         newCurrentValue = Double(newDisplay) ?? 0
